@@ -1,20 +1,41 @@
+#  Program code start
 from yandex_translate import YandexTranslate
 import random
-import re
+import json
+import requests
 from tkinter import *
 import pickle
 
-#  Gloabl variable that will hold the set of words
+#  Global variable that will hold the set of words
 intial_set = set(())
+json_data = {"all_words": []}
 
 def translate_given_words(words_list, translation_code):
-    api_key = "<insert-key-here>"
-    translate = YandexTranslate(api_key)
-    print("Languages: ", translate.langs)
-    print("Translate: ", translate.translate("Bread", translation_code))
-    for word in words_list:
-        print("Translation: ", translate.translate(word, translation_code))
+    # api_key = "trnsl.1.1.20180729T203420Z.82690e64023c6383.3465f275a4cdf726ca3da96a18a3fc92fd40bb59"
+    # translate = YandexTranslate(api_key)
 
+    # return_data = translate.translate("bread", translation_code)
+    return_data = {"code": 200, "lang": "en-de", "text": ["Brot"]}
+    current_word_test = "testing"
+
+    # Appending the word to the word json object
+    json_data["all_words"].append({"en": current_word_test, "de": return_data["text"][0], "definition": call_dictionary_api(current_word_test), "word-no": 1})
+    json_data["all_words"].append({"en": "secondtest", "de": return_data["text"][0], "definition": "This is the definition", "word-no": 1})
+    print(json.dumps(json_data))
+
+
+def call_dictionary_api(word):
+    application_id = "50c53116"
+    application_key = "954a6f4b4e2b8acbef041584f6351783"
+    language_chosen = "en"
+    word_for_dict = word
+    # Building the url for contacting the API
+    url = "https://od-api.oxforddictionaries.com:443/api/v1/entries/" + language_chosen + "/" + word_for_dict.lower()
+    request = requests.get(url, headers = {"app_id": application_id, "app_key": application_key})
+    data = request.json()
+    # data = {"id": "delighted", "language": "en", "lexicalEntries": [{"derivatives": [{"id": "delightedly", "text": "delightedly"}], "entries": [{"grammaticalFeatures": [{"text": "Positive", "type": "Degree"}], "homographNumber": "000", "senses": [{"definitions": ["feeling or showing great pleasure"], "examples": [{"text": "a delighted smile"}, {"text": "we were delighted to see her"}], "id": "m_en_gbus0261820.005", "short_definitions": ["feeling or showing great pleasure"], "thesaurusLinks": [{"entry_id": "delighted", "sense_id": "t_en_gb0003631.001"}]}]}], "language": "en", "lexicalCategory": "Adjective", "pronunciations": [{"audioFile": "http://audio.oxforddictionaries.com/en/mp3/delighted_gb_1.mp3", "dialects": ["British English"], "phoneticNotation": "IPA", "phoneticSpelling": "d\u026a\u02c8l\u028c\u026at\u026ad"}], "text": "delighted"}], "type": "headword", "word": "delighted"}
+    definition = data["results"][0]["lexicalEntries"][0]["entries"][0]["senses"][0]["definitions"][0]
+    return definition
 
 # Reading from the dictionary file
 def read_from_dictionary(filepath):
@@ -56,7 +77,7 @@ def start_program():
     #  Remove the 5 words from the set
     for word in my_five_words:
         intial_set.discard(word)
-    # translate_given_words(my_five_words, "de")
+    translate_given_words(my_five_words, "de")
 
 
 # Clears the seen-words text file (DO NOT PASS IN THE DICTIONARY AS IT WILL DELETE EVERYTHING)
