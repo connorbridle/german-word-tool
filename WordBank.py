@@ -1,10 +1,15 @@
 from yandex_translate import YandexTranslate
 import random
+import re
 from tkinter import *
+import pickle
 
+#  Gloabl variable that will hold the set of words
+intial_set = set(())
 
 def translate_given_words(words_list, translation_code):
-    translate = YandexTranslate("trnsl.1.1.20180729T203420Z.82690e64023c6383.3465f275a4cdf726ca3da96a18a3fc92fd40bb59")
+    api_key = "<insert-key-here>"
+    translate = YandexTranslate(api_key)
     print("Languages: ", translate.langs)
     print("Translate: ", translate.translate("Bread", translation_code))
     for word in words_list:
@@ -35,19 +40,23 @@ def reset_dictionary(dictionaryPath, seenWordsPath):
 
 
 # Picks 5 random numbers from the list of words for the user to learn
-def pick_five_words():
-    dict_of_words = read_from_dictionary("words.txt")
-    list_of_five = []
-    for x in range(5):
-        list_of_five.append(dict_of_words[random.randint(0, len(dict_of_words))])
+def pick_five_words(set):
+    list_of_five = random.sample(set, 5)
     return list_of_five
 
 
 # Program gives the user an option of 5 randomly selected words from the dictionary file, user picks one
 def start_program():
-    my_five_words = pick_five_words()
+    intial_set = find_unique_words("emma-janeaustin.txt")  # Contains approx. 7000 words
+    additional_set = find_unique_words("greatexpectation-charlesdickens.txt")
+    intial_set = intial_set.union(additional_set)  # Joins the two sets together to form a single set
+    print(len(intial_set))
+    my_five_words = pick_five_words(intial_set)
     print(my_five_words)
-    translate_given_words(my_five_words, "de")
+    #  Remove the 5 words from the set
+    for word in my_five_words:
+        intial_set.discard(word)
+    # translate_given_words(my_five_words, "de")
 
 
 # Clears the seen-words text file (DO NOT PASS IN THE DICTIONARY AS IT WILL DELETE EVERYTHING)
@@ -59,6 +68,16 @@ def delete_file_contents(seenWordsPath):
         print("No valid file found, please use the correct path.")
 
 
+# Given a text file filled with a section of words, will search through and add unique words to a set
+def find_unique_words(filepath):
+    my_set = set(())
+    with open(filepath) as infile:
+        for line in infile:
+            words_in_line = line.split()
+            for word in words_in_line:
+                word = re.sub(r'[^\w\s]','', word)
+                my_set.add(word)
+    return my_set
+
+
 start_program()
-
-
