@@ -11,7 +11,7 @@ intial_set = set(())
 json_data = {"all_words": []}
 
 def translate_given_words(words_list, translation_code):
-    # api_key = "trnsl.1.1.20180729T203420Z.82690e64023c6383.3465f275a4cdf726ca3da96a18a3fc92fd40bb59"
+    # api_key = "<api-key-here>"
     # translate = YandexTranslate(api_key)
 
     # return_data = translate.translate("bread", translation_code)
@@ -25,8 +25,8 @@ def translate_given_words(words_list, translation_code):
 
 
 def call_dictionary_api(word):
-    application_id = "50c53116"
-    application_key = "954a6f4b4e2b8acbef041584f6351783"
+    application_id = "<api-id-here>"
+    application_key = "<api-key-here>"
     language_chosen = "en"
     word_for_dict = word
     # Building the url for contacting the API
