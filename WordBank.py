@@ -43,6 +43,18 @@ def read_from_dictionary(filepath):
     return lines
 
 
+def read_local_json(filepath):
+    # Reads from the local file and brings the learnt words back into the program
+    with open(filepath) as f:
+        data = json.load(f)
+    return data
+
+
+# Saves the json object to a file
+def save_local_json(filepath, data):
+    with open(filepath) as f:
+        json.dump(data)
+
 # Adds the words to another txt document which acts as a dictionary of learnt words
 def mark_words_as_seen():
     print("Marking words as seen")
